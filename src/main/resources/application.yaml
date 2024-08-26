@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: demo
+
+files-path:
+  path-to-addr-obj: "E:/TestFiles/AS_ADDR_OBJ.XML"
+  path-to-hierarchy: "E:/TestFiles/AS_ADM_HIERARCHY.XML"
