@@ -1,6 +1,7 @@
 package com.example.demo.rest;
 
 import com.example.demo.request.AddressListRequest;
+import com.example.demo.services.FileReaderService;
 import com.example.demo.services.FileReaderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/")
-public class FileDataReaderController {
+public class AddressDataController {
 
-  private final FileReaderServiceImpl service;
+  private final FileReaderService service;
 
   @PostMapping("addresses/")
   public List<String> getAddressesByIdAndDate(@RequestBody AddressListRequest request) {
@@ -25,8 +26,8 @@ public class FileDataReaderController {
   }
 
   @GetMapping("addresses-hierarchy/")
-  public List<String> getAllAddressByHierarchy(@RequestParam String typeName) {
-    return service.getAllAddressByHierarchy(typeName);
+  public List<String> getFullAddressByTypeName(@RequestParam String typeName) {
+    return service.getFullAddressByTypeName(typeName);
   }
 
 }

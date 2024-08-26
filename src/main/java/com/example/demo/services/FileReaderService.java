@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface FileReaderService {
   List<String> getAddressListByIdsAndDate(AddressListRequest request);
-  List<String> getAllAddressByHierarchy(String typeName);
+  List<String> getFullAddressByTypeName(String typeName);
 
 }

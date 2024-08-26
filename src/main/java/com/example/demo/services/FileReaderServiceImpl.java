@@ -24,12 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class FileReaderServiceImpl implements FileReaderService {
-
   private final FilesPathConfig config;
 
   public List<String> getAddressListByIdsAndDate(AddressListRequest request) {
     log.info("Получили запрос {}", request);
-    List<AddressObject> addressObjectList = readDataFromFiles();
+    List<AddressObject> addressObjectList = getAddressesFromFiles();
 
     return addressObjectList.stream()
                             .filter(address -> request.getAddressIds().contains(address.getId())
@@ -43,9 +42,9 @@ public class FileReaderServiceImpl implements FileReaderService {
                             .collect(Collectors.toList());
   }
 
-  public List<String> getAllAddressByHierarchy(String typeName) {
+  public List<String> getFullAddressByTypeName(String typeName) {
     log.info("Ищем по типу адреса {}", typeName);
-    List<AddressObject> addressObjectList = readDataFromFiles();
+    List<AddressObject> addressObjectList = getAddressesFromFiles();
     List<String> listStrings = new ArrayList<>();
 
     var filteredAddresses = addressObjectList.stream()
@@ -58,9 +57,9 @@ public class FileReaderServiceImpl implements FileReaderService {
       var parentId = getParentId(addressObject.getObjectId());
 
       while (!parentId.equals("0")) {
-        String par = parentId;
+        String finalParentId = parentId;
         var address = addressObjectList.stream()
-                                       .filter(ad -> ad.getObjectId().equals(par))
+                                       .filter(ad -> ad.getObjectId().equals(finalParentId))
                                        .findFirst()
                                        .get();
 
@@ -68,6 +67,7 @@ public class FileReaderServiceImpl implements FileReaderService {
         parentId = getParentId(address.getObjectId());
       }
 
+      //Не стал тут изобретать велосипед, сделал быстрое решение
       fullAddress.insert(0, "AO ");
       listStrings.add(fullAddress.toString());
     }
@@ -86,7 +86,7 @@ public class FileReaderServiceImpl implements FileReaderService {
 
   }
 
-  private List<AddressObject> readDataFromFiles() {
+  private List<AddressObject> getAddressesFromFiles() {
     List<AddressObject> addressObjectsList = new ArrayList<>();
     try {
       File addressFile = new File(config.pathToAddrObj());

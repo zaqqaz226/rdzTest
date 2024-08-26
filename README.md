@@ -1,7 +1,10 @@
 # Getting Started
 
 Поднимается на контроллере
+
+# Первое задание
 Надо сделать запрос по адресу: /addresses/ 
+
 Запрос вида:
 {
   "addressIds": [
@@ -13,4 +16,10 @@
   "date": "2015-01-01"
 }
 
+# Второе задание
+
+Надо сделать запрос по адресу: /addresses-hierarchy/
+
+Запрос вида:
+http://localhost:8080/addresses-hierarchy/?typeName=проезд
 
