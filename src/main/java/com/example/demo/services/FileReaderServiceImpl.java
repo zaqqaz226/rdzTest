@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
 import com.example.demo.config.FilesPathConfig;
+import com.example.demo.exceptions.AddressObjectException;
+import com.example.demo.exceptions.HierarchyException;
 import com.example.demo.pojos.adress.AddressObject;
 import com.example.demo.pojos.adress.AddressObjectsCollection;
 import com.example.demo.pojos.hierarchy.HierarchyObject;
@@ -52,16 +54,20 @@ public class FileReaderServiceImpl implements FileReaderService {
                                              .collect(Collectors.toList());
 
     for (AddressObject addressObject : filteredAddresses) {
-      StringBuilder fullAddress = new StringBuilder(addressObject.getTypeName() + " " + addressObject.getName());
+      StringBuilder fullAddress = new StringBuilder(
+          addressObject.getTypeName() + " " + addressObject.getName());
 
       var parentId = getParentId(addressObject.getObjectId());
 
       while (!parentId.equals("0")) {
         String finalParentId = parentId;
-        var address = addressObjectList.stream()
-                                       .filter(ad -> ad.getObjectId().equals(finalParentId))
-                                       .findFirst()
-                                       .get();
+        AddressObject address = addressObjectList.stream()
+                                                 .filter(ad -> ad.getObjectId().equals(finalParentId))
+                                                 .findFirst()
+                                                 .orElseThrow(() -> new AddressObjectException(
+                                           "Не найдено объекта адреса для id: %s".formatted(
+                                               finalParentId)
+                                       ));
 
         fullAddress.insert(0, address.getName() + ", ");
         parentId = getParentId(address.getObjectId());
@@ -80,7 +86,9 @@ public class FileReaderServiceImpl implements FileReaderService {
     var entity = hierarchyObjectList.stream()
                                     .filter(h -> h.getObjectId().equals(id))
                                     .findFirst()
-                                    .get();
+                                    .orElseThrow(() -> new HierarchyException(
+                                        "Не найдено ни одного родительского элемента для id: %s".formatted(
+                                            id)));
 
     return entity.getParentObjectId();
 
